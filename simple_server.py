@@ -125,6 +125,9 @@ class DownloadHandler(SimpleHTTPRequestHandler):
         try:
             # 解码URL编码的路径
             folder_path = urllib.parse.unquote(folder_path)
+            # 去除路径开头的斜杠，防止拼接时变成绝对路径
+            folder_path = folder_path.lstrip('/').lstrip('\\')
+            
             # 规范化路径分隔符
             folder_path = folder_path.replace('/', os.sep).replace('\\', os.sep)
             
@@ -162,7 +165,7 @@ class DownloadHandler(SimpleHTTPRequestHandler):
             self.send_header('Content-Length', str(zip_buffer.tell()))
             self.end_headers()
             
-            # ���送ZIP文件内容
+            # 发送ZIP文件内容
             shutil.copyfileobj(zip_buffer, self.wfile)
             zip_buffer.close()
             print(f"文件夹打包完成: {safe_filename}.zip")
